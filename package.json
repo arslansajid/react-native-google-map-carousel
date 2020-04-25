@@ -1,13 +1,13 @@
 {
   "name": "react-native-google-map-carousel",
   "description": "A carousel for react-native built on top of google maps",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "author": "Arslan Sajid",
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "web": "expo start --web"
+    "test": "echo \"No test specified\""
   },
   "dependencies": {
     "react": "~16.9.0",
@@ -28,5 +28,9 @@
     "metro-react-native-babel-preset": "~0.56.0",
     "react-test-renderer": "~16.9.0",
     "babel-preset-expo": "~8.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }
