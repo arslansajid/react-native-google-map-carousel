@@ -2,6 +2,11 @@ react-native-google-map-carousel
 
 A carousel for react-native built on top of google maps
 
+## Install using npm
+```
+npm i react-native-google-map-carousel
+```
+
 ## Getting Started
 
 To get started: 
