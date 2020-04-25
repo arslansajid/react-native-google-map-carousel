@@ -32,5 +32,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arslansajid/react-native-google-map-carousel.git"
   }
 }
