@@ -1,58 +1,64 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { Text, View, Dimensions } from "react-native";
+import PropTypes from "prop-types";
 import MapView, { Marker } from "react-native-maps";
 import Carousel from "react-native-snap-carousel";
-
 const SCREEN_WIDTH = Dimensions.get("window").width;
+import styles from "./styles";
 
-export default class App extends Component {
+class App extends Component {
   constructor() {
     super();
     this.state = {
       selectedId: 0,
-      initialRegion: {
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421
-      },
-      markers: [
-        { id: 0, title: "Card 1", LatLng: { latitude: 37.78825, longitude: -122.4324 } },
-        { id: 1, title: "Card 2", LatLng: { latitude: 37.77825, longitude: -122.4424 } },
-        { id: 2, title: "Card 3", LatLng: { latitude: 37.76825, longitude: -122.4524 } },
-        { id: 3, title: "Card 4", LatLng: { latitude: 37.75825, longitude: -122.4624 } },
-        { id: 4, title: "Card 4", LatLng: { latitude: 37.74825, longitude: -122.4724 } }
-      ]
     };
   }
   renderCarouselItem = (value, index) => (
-    <View
-      key={(index, value.item.title)}
-      style={{
-        backgroundColor: "#fff",
-        borderColor: "#000",
-        borderWidth: 1,
-        borderRadius: 4,
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%"
-      }}
-    >
-      <Text>Title: {value.item.title}</Text>
-      <Text>Latitude: {value.item.LatLng.latitude}</Text>
-      <Text>Longitude: {value.item.LatLng.longitude}</Text>
-    </View>
+    this.props.cardItem ? (
+      <View
+        style={[{
+          backgroundColor: "#fff",
+          borderColor: "#000",
+          borderWidth: 1,
+          borderRadius: 4,
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%"
+        }, !!this.props.contentContainerCustomStyle ? this.props.contentContainerCustomStyle : {}]}
+      >
+        {this.props.cardItem(value, index)}
+      </View>
+    )
+      :
+      <View
+        key={(index, value.item.title)}
+        style={[{
+          backgroundColor: "#fff",
+          borderColor: "#000",
+          borderWidth: 1,
+          borderRadius: 4,
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%"
+        }, !!this.props.contentContainerCustomStyle ? this.props.contentContainerCustomStyle : {}]}
+      >
+        <Text>Title: {value.item.title}</Text>
+        <Text>Latitude: {value.item.LatLng.latitude}</Text>
+        <Text>Longitude: {value.item.LatLng.longitude}</Text>
+      </View>
   );
 
   goToCarosuelItem = index => {
-    if (this.carouselRef && index !== null) this.carouselRef.snapToItem(index);
+    if (this.carouselRef && index !== null) {
+      this.carouselRef.snapToItem(index);
+    }
   };
 
   selectMarker = id => {
     this.mapViewRef.animateToRegion(
       {
-        latitude: parseFloat(this.state.markers[id].LatLng.latitude),
-        longitude: parseFloat(this.state.markers[id].LatLng.longitude),
+        latitude: parseFloat(this.props.items[id].LatLng.latitude),
+        longitude: parseFloat(this.props.items[id].LatLng.longitude),
         latitudeDelta: 0.0122,
         longitudeDelta: 0.0121
       },
@@ -62,18 +68,19 @@ export default class App extends Component {
 
   selectItem = id => {
     this.setState(prevstate => {
-        if (prevstate.selectedId != id) {
-          return { selectedId: id };
-        }
-        return null;
-      }, () => {
-        this.goToCarosuelItem(id);
-        this.selectMarker(id);
+      if (prevstate.selectedId != id) {
+        return { selectedId: id };
       }
+      return null;
+    }, () => {
+      this.goToCarosuelItem(id);
+      this.selectMarker(id);
+    }
     );
   };
 
   render() {
+    const { initialRegion, items, marker, autoPlay, firstItem, layout, containerCustomStyle, contentContainerCustomStyle } = this.props;
     return (
       <View style={styles.container}>
         <MapView
@@ -81,10 +88,10 @@ export default class App extends Component {
             this.mapViewRef = ref;
           }}
           // provider={MapView.PROVIDER_GOOGLE}
-          initialRegion={this.state.initialRegion}
+          initialRegion={initialRegion}
           style={styles.mapStyle}
         >
-          {this.state.markers.map((value, index) => (
+          {items.map((value, index) => (
             <Marker
               key={index + value.title}
               coordinate={value.LatLng}
@@ -94,21 +101,30 @@ export default class App extends Component {
                 this.selectItem(value.id);
               }}
             >
-              <View
-                key={index + value.title + "inner"}
-                style={{
-                  width: 50,
-                  height: 30,
-                  backgroundColor: this.state.selectedId === value.id ? "red" : "#fff",
-                  borderColor: this.state.selectedId === value.id ? "#fff" : "#000",
-                  borderWidth: 1,
-                  borderRadius: 4,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                <Text style={{ color: this.state.selectedId === value.id ? "#fff" : "#000" }}>{value.title}</Text>
-              </View>
+              {
+                !!marker
+                  ?
+                  <View
+                    key={index + value.title + "inner"}>
+                    {marker}
+                  </View>
+                  :
+                  <View
+                    key={index + value.title + "inner"}
+                    style={{
+                      width: 50,
+                      height: 30,
+                      backgroundColor: this.state.selectedId === value.id ? "red" : "#fff",
+                      borderColor: this.state.selectedId === value.id ? "#fff" : "#000",
+                      borderWidth: 1,
+                      borderRadius: 4,
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}
+                  >
+                    <Text style={{ color: this.state.selectedId === value.id ? "#fff" : "#000" }}>{value.title}</Text>
+                  </View>
+              }
             </Marker>
           ))}
         </MapView>
@@ -117,7 +133,11 @@ export default class App extends Component {
             ref={ref => {
               this.carouselRef = ref;
             }}
-            data={this.state.markers}
+            containerCustomStyle={containerCustomStyle}
+            layout={layout}
+            autoplay={autoPlay}
+            firstItem={firstItem - 1}
+            data={items}
             renderItem={this.renderCarouselItem}
             sliderWidth={SCREEN_WIDTH}
             itemWidth={SCREEN_WIDTH - 25}
@@ -134,15 +154,23 @@ export default class App extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  mapStyle: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height
-  },
-});
+App.propTypes = {
+  initialRegion: PropTypes.object.isRequired,
+  items: PropTypes.array.isRequired,
+  marker: PropTypes.node,
+  cardItem: PropTypes.func,
+  layout: PropTypes.oneOf(["default", "stack", "tinder"]),
+  autoPlay: PropTypes.bool,
+  firstItem: PropTypes.number,
+  contentContainerCustomStyle: PropTypes.object,
+  containerCustomStyle: PropTypes.object,
+};
+
+App.defaultProps = {
+  autoPlay: false,
+  firstItem: 0,
+  layout: "default",
+  containerCustomStyle: {}
+};
+
+export default App;
