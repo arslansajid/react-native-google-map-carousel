@@ -7,6 +7,19 @@ A carousel for react-native built on top of google maps
 npm i react-native-google-map-carousel
 ```
 
+## Props
+```
+initialRegion: PropTypes.object.isRequired,
+items: PropTypes.array.isRequired,
+marker: PropTypes.node,
+cardItem: PropTypes.func,
+layout: PropTypes.oneOf(["default", "stack", "tinder"]),
+autoPlay: PropTypes.bool,
+firstItem: PropTypes.number,
+contentContainerCustomStyle: PropTypes.object,
+containerCustomStyle: PropTypes.object,
+```
+
 ## Getting Started
 
 To get started: 
