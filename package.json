@@ -1,7 +1,7 @@
 {
   "name": "react-native-google-map-carousel",
   "description": "A carousel for react-native built on top of google maps",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "author": "Arslan Sajid",
   "scripts": {
     "start": "react-native start",
